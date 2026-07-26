@@ -1,0 +1,47 @@
+CREATE TABLE messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_public_key TEXT NOT NULL,
+    sender_x25519_public_key TEXT NOT NULL DEFAULT '',
+    sender_onion_address TEXT NOT NULL DEFAULT '',
+    content TEXT NOT NULL,
+    is_outgoing INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'sent',
+    timestamp INTEGER NOT NULL,
+    mime_type TEXT NOT NULL DEFAULT '',
+    audio_bytes BLOB,
+    duration_ms INTEGER,
+    sender_message_id TEXT DEFAULT NULL,
+    delivery_timestamp INTEGER DEFAULT NULL,
+    created_at INTEGER NOT NULL
+);
+
+insertMessage:
+INSERT INTO messages (sender_public_key, sender_x25519_public_key, sender_onion_address, content, is_outgoing, status, timestamp, mime_type, audio_bytes, duration_ms, sender_message_id, delivery_timestamp, created_at)
+VALUES (:sender_public_key, :sender_x25519_public_key, :sender_onion_address, :content, :is_outgoing, :status, :timestamp, :mime_type, :audio_bytes, :duration_ms, :sender_message_id, :delivery_timestamp, :created_at);
+
+selectBySender:
+SELECT * FROM messages WHERE sender_public_key = :sender_public_key ORDER BY timestamp ASC;
+
+selectById:
+SELECT * FROM messages WHERE id = :id;
+
+selectBySenderMessageId:
+SELECT * FROM messages WHERE sender_message_id = :sender_message_id LIMIT 1;
+
+getLastMessagePerContact:
+SELECT * FROM messages WHERE id IN (
+    SELECT MAX(id) FROM messages GROUP BY sender_public_key
+)
+ORDER BY timestamp DESC;
+
+updateStatus:
+UPDATE messages SET status = :status WHERE id = :id;
+
+updateStatusBySenderMessageId:
+UPDATE messages SET status = :status, delivery_timestamp = :delivery_timestamp WHERE sender_message_id = :sender_message_id;
+
+deleteBySender:
+DELETE FROM messages WHERE sender_public_key = :sender_public_key;
+
+deleteAllMessages:
+DELETE FROM messages;

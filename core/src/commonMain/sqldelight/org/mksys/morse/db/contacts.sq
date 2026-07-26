@@ -1,0 +1,42 @@
+CREATE TABLE contacts (
+    public_key TEXT NOT NULL PRIMARY KEY,
+    x25519_public_key TEXT NOT NULL DEFAULT '',
+    onion_address TEXT NOT NULL DEFAULT '',
+    display_name TEXT NOT NULL DEFAULT '',
+    last_seen INTEGER NOT NULL DEFAULT 0,
+    avatar_color_index INTEGER NOT NULL DEFAULT -1,
+    is_blocked INTEGER NOT NULL DEFAULT 0,
+    is_disconnected INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+);
+
+getByPublicKey:
+SELECT * FROM contacts WHERE public_key = :public_key;
+
+insertContact:
+INSERT OR REPLACE INTO contacts (public_key, x25519_public_key, onion_address, display_name, last_seen, avatar_color_index, is_blocked, is_disconnected, created_at)
+VALUES (:public_key, :x25519_public_key, :onion_address, :display_name, :last_seen, :avatar_color_index, :is_blocked, :is_disconnected, :created_at);
+
+getAllContacts:
+SELECT * FROM contacts ORDER BY display_name ASC;
+
+deleteByPublicKey:
+DELETE FROM contacts WHERE public_key = :public_key;
+
+updateDisplayName:
+UPDATE contacts SET display_name = :display_name WHERE public_key = :public_key;
+
+updateLastSeen:
+UPDATE contacts SET last_seen = :last_seen WHERE public_key = :public_key;
+
+setDisconnected:
+UPDATE contacts SET is_disconnected = 1 WHERE public_key = :public_key;
+
+setReactivated:
+UPDATE contacts SET is_disconnected = 0, is_blocked = 0 WHERE public_key = :public_key;
+
+setBlocked:
+UPDATE contacts SET is_blocked = :blocked WHERE public_key = :public_key;
+
+deleteAllContacts:
+DELETE FROM contacts;

@@ -1,0 +1,20 @@
+CREATE TABLE connection_requests (
+    public_key TEXT NOT NULL PRIMARY KEY,
+    x25519_public_key TEXT NOT NULL,
+    onion_address TEXT NOT NULL,
+    display_name TEXT NOT NULL,
+    timestamp INTEGER NOT NULL
+);
+
+insertRequest:
+INSERT OR REPLACE INTO connection_requests (public_key, x25519_public_key, onion_address, display_name, timestamp)
+VALUES (:public_key, :x25519_public_key, :onion_address, :display_name, :timestamp);
+
+getAllRequests:
+SELECT * FROM connection_requests ORDER BY timestamp DESC;
+
+deleteByPublicKey:
+DELETE FROM connection_requests WHERE public_key = :public_key;
+
+deleteAllRequests:
+DELETE FROM connection_requests;

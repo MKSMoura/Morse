@@ -1,0 +1,17 @@
+CREATE TABLE identity (
+    id INTEGER NOT NULL PRIMARY KEY DEFAULT 1,
+    display_name TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    ed25519_private_key BLOB NOT NULL,
+    ed25519_public_key BLOB NOT NULL,
+    x25519_private_key BLOB NOT NULL,
+    x25519_public_key BLOB NOT NULL,
+    onion_address TEXT NOT NULL DEFAULT ''
+);
+
+selectById:
+SELECT * FROM identity WHERE id = 1;
+
+insertIdentity:
+INSERT OR REPLACE INTO identity (id, display_name, created_at, ed25519_private_key, ed25519_public_key, x25519_private_key, x25519_public_key, onion_address)
+VALUES (1, :display_name, :created_at, :ed25519_private_key, :ed25519_public_key, :x25519_private_key, :x25519_public_key, :onion_address);

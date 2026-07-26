@@ -1,0 +1,31 @@
+CREATE TABLE app_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type TEXT NOT NULL,
+    sender_public_key TEXT,
+    sender_display_name TEXT,
+    message TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    is_read INTEGER NOT NULL DEFAULT 0
+);
+
+insertEvent:
+INSERT INTO app_events (type, sender_public_key, sender_display_name, message, timestamp, is_read)
+VALUES (:type, :sender_public_key, :sender_display_name, :message, :timestamp, :is_read);
+
+getAllEvents:
+SELECT * FROM app_events ORDER BY timestamp DESC;
+
+getUnreadCount:
+SELECT COUNT(*) FROM app_events WHERE is_read = 0;
+
+markAsRead:
+UPDATE app_events SET is_read = 1 WHERE id = :id;
+
+markAllAsRead:
+UPDATE app_events SET is_read = 1;
+
+deleteById:
+DELETE FROM app_events WHERE id = :id;
+
+deleteAllEvents:
+DELETE FROM app_events;
